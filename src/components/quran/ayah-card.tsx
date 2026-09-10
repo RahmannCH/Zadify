@@ -137,7 +137,11 @@ export function AyahCard({ verse, chapter, fontSize, showTranslation, isPlayable
                     dangerouslySetInnerHTML={{ 
                       __html: tafsirText
                         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-                        .replace(/style="[^"]*"/gi, "") 
+                        .replace(/\s+on\w+="[^"]*"/gi, "")
+                        .replace(/\s+on\w+='[^']*'/gi, "")
+                        .replace(/<iframe[^>]*>.*?<\/iframe>/gi, "")
+                        .replace(/javascript:/gi, "")
+                        .replace(/style="[^"]*"/gi, "")
                     }} 
                   />
                 )}
@@ -244,7 +248,7 @@ export function AyahCard({ verse, chapter, fontSize, showTranslation, isPlayable
               <span
                 dangerouslySetInnerHTML={{
                   __html: cleanTranslation.replace(
-                    new RegExp(`(${searchQuery.trim()})`, "gi"),
+                    new RegExp(`(${searchQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"),
                     '<mark class="bg-amber-500/25 text-amber-900 dark:text-amber-300 font-bold px-1 rounded border border-amber-500/30">$1</mark>'
                   ),
                 }}

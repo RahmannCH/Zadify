@@ -86,18 +86,23 @@ export default function PvPQuizArenaPage() {
 
     const currentQ = PVP_QUESTIONS[currentQIndex];
     const isCorrect = optIndex === currentQ.ans;
+    const addedUserScore = isCorrect ? 100 + timeLeft * 10 : 0;
     if (isCorrect) {
       sfx.playSuccess();
-      setMyScore((s) => s + 100 + timeLeft * 10);
+      setMyScore((s) => s + addedUserScore);
     } else {
       sfx.playWoosh();
     }
 
     // Simulate rival logic (75% accuracy)
     const rivalIsCorrect = Math.random() < 0.75;
+    const addedRivalScore = rivalIsCorrect ? 100 + Math.floor(Math.random() * 8) * 10 : 0;
     if (rivalIsCorrect) {
-      setRivalScore((s) => s + 100 + Math.floor(Math.random() * 8) * 10);
+      setRivalScore((s) => s + addedRivalScore);
     }
+
+    const calculatedMyScore = myScore + addedUserScore;
+    const calculatedRivalScore = rivalScore + addedRivalScore;
 
     setTimeout(() => {
       if (currentQIndex < PVP_QUESTIONS.length - 1) {
@@ -106,7 +111,7 @@ export default function PvPQuizArenaPage() {
         setIsAnswered(false);
         setTimeLeft(10);
       } else {
-        const finalReward = myScore > rivalScore ? 150 : 50;
+        const finalReward = calculatedMyScore > calculatedRivalScore ? 150 : 50;
         addXP(finalReward, "Tanding PvP Arena");
         addWeeklyXp(finalReward);
         setGameState("result");

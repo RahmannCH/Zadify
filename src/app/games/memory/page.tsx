@@ -137,9 +137,9 @@ export default function MemoryGame() {
     setHintsUsed(1);
     const unmatched = cards.filter((c) => !c.isMatched && !c.isFlipped);
     const tempFlipped = unmatched.slice(0, 2).map((c) => c.id);
-    setCards(cards.map((c) => (tempFlipped.includes(c.id) ? { ...c, isFlipped: true } : c)));
+    setCards((prev) => prev.map((c) => (tempFlipped.includes(c.id) ? { ...c, isFlipped: true } : c)));
     setTimeout(() => {
-      setCards(cards.map((c) => (tempFlipped.includes(c.id) ? { ...c, isFlipped: false } : c)));
+      setCards((prev) => prev.map((c) => (tempFlipped.includes(c.id) && !c.isMatched ? { ...c, isFlipped: false } : c)));
     }, 2000);
   };
 

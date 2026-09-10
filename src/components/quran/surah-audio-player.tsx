@@ -48,13 +48,9 @@ export function SurahAudioPlayer({
   }, []);
 
   useEffect(() => {
-    setCurrentAyah(initialAyah);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.load();
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {});
+    if (initialAyah !== currentAyah) {
+      setCurrentAyah(initialAyah);
+      setIsPlaying(true);
     }
   }, [initialAyah]);
 

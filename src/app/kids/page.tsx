@@ -8,7 +8,7 @@ import Link from "next/link";
 import { sfx } from "@/lib/sfx";
 
 const KIDS_FEATURES = [
-  { href: "/kids/kisah-nabi", label: "Kisah Para Nabi", icon: BookOpen, desc: "Cerita teladan 25 Nabi & Rasul dengan hikmah menarik.", color: "text-amber-500", bg: "bg-amber-500/10" },
+  { href: "/kids/kisah-nabi", label: "Kisah Para Nabi", icon: BookOpen, desc: "Cerita teladan 15 Nabi & Rasul dengan hikmah menarik.", color: "text-amber-500", bg: "bg-amber-500/10" },
   { href: "/kids/parent", label: "Dashboard Orang Tua", icon: Shield, desc: "Pantau progress dan pencapaian ibadah anak.", color: "text-blue-500", bg: "bg-blue-500/10" },
   { href: "/kids/gender-edu", label: "Edukasi Tumbuh Kembang", icon: Smile, desc: "Panduan orang tua: Edukasi fitrah & gender versi Islam.", color: "text-indigo-500", bg: "bg-indigo-500/10" },
 ];

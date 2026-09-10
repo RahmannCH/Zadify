@@ -122,7 +122,10 @@ export default function SearchPage() {
     }
 
     // 3. Bangun regex eksklusif hanya untuk kata yang dicari user
-    const pattern = new RegExp(`(${qWords.join("|")})`, "gi");
+    const pattern = new RegExp(
+      `(${qWords.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`,
+      "gi"
+    );
     const formatted = cleanText.replace(
       pattern,
       '<mark class="bg-amber-500/25 text-amber-900 dark:text-amber-300 font-bold px-1.5 py-0.5 rounded border border-amber-500/30">$1</mark>'

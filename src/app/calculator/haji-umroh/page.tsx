@@ -17,6 +17,8 @@ import {
   Zap,
   BookOpen,
   DollarSign,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { sfx } from "@/lib/sfx";
 import {
@@ -54,6 +56,39 @@ export default function EnhancedHajiCalculator() {
   const [monthlyIncome, setMonthlyIncome] = useState(5000000);
   const [dailySavings, setDailySavings] = useState(0);
   const [activeTab, setActiveTab] = useState<"kalkulator" | "riwayat" | "roadmap" | "doa">("kalkulator");
+  const [playingDoaIndex, setPlayingDoaIndex] = useState<number | null>(null);
+
+  const handlePlayDoaAudio = (arabic: string, index: number) => {
+    sfx.playTap();
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      if (playingDoaIndex === index) {
+        window.speechSynthesis.cancel();
+        setPlayingDoaIndex(null);
+        return;
+      }
+      window.speechSynthesis.resume();
+      window.speechSynthesis.cancel();
+
+      const voices = window.speechSynthesis.getVoices();
+      const arabicVoice = voices.find((v) => v.lang.startsWith("ar"));
+
+      const utterance = new SpeechSynthesisUtterance(arabic);
+      if (arabicVoice) {
+        utterance.voice = arabicVoice;
+        utterance.lang = "ar-SA";
+        utterance.rate = 0.85;
+      } else {
+        utterance.lang = "ar-SA";
+        utterance.rate = 0.9;
+      }
+
+      utterance.onend = () => setPlayingDoaIndex(null);
+      utterance.onerror = () => setPlayingDoaIndex(null);
+
+      setPlayingDoaIndex(index);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   useEffect(() => {
     store.calculateStreak();
@@ -430,8 +465,22 @@ export default function EnhancedHajiCalculator() {
                   {doa.arabic}
                 </p>
                 <p className="text-sm text-muted-foreground italic mb-3 font-medium">{doa.meaning}</p>
-                <Button variant="outline" className="w-full rounded-xl text-sm">
-                  Dengarkan Audio
+                <Button
+                  onClick={() => handlePlayDoaAudio(doa.arabic, idx)}
+                  variant={playingDoaIndex === idx ? "default" : "outline"}
+                  className="w-full rounded-xl text-sm gap-2"
+                >
+                  {playingDoaIndex === idx ? (
+                    <>
+                      <VolumeX className="h-4 w-4 text-amber-300 animate-pulse" />
+                      Hentikan Audio
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="h-4 w-4" />
+                      Dengarkan Audio Doa
+                    </>
+                  )}
                 </Button>
               </motion.div>
             ))}

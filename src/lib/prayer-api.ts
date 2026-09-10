@@ -154,10 +154,13 @@ export function getNextPrayer(prayerTimes: NonNullable<PrayerTimesResponse["data
     }
   }
 
+  const [fH, fM] = (times.Fajr || "04:30").split(":").map(Number);
+  const fajrMinutes = (isNaN(fH) ? 4 : fH) * 60 + (isNaN(fM) ? 30 : fM);
+
   return {
     name: "Fajr",
     time: times.Fajr,
-    secondsLeft: (24 * 60 - currentTime + 4 * 60) * 60,
+    secondsLeft: (24 * 60 - currentTime + fajrMinutes) * 60,
   };
 }
 
@@ -172,15 +175,25 @@ export function formatTime(seconds: number) {
   return `${m}m ${s}s`;
 }
 
-export function getPrayerProgress(currentTime: string, nextTime: string) {
+export function getPrayerProgress(currentTime: string, nextTime: string, previousTime?: string) {
   const [currH, currM] = currentTime.split(":").map(Number);
   const [nextH, nextM] = nextTime.split(":").map(Number);
   
   const currentMinutes = currH * 60 + currM;
-  const nextMinutes = nextH * 60 + nextM;
+  let nextMinutes = nextH * 60 + nextM;
+  if (nextMinutes < currentMinutes) nextMinutes += 24 * 60;
   
-  const totalTime = nextMinutes - currentMinutes;
-  const elapsed = currentMinutes - currentMinutes;
+  let prevMinutes = 0;
+  if (previousTime) {
+    const [prevH, prevM] = previousTime.split(":").map(Number);
+    prevMinutes = prevH * 60 + prevM;
+  } else {
+    prevMinutes = Math.max(0, nextMinutes - 180);
+  }
   
+  const totalTime = nextMinutes - prevMinutes;
+  const elapsed = currentMinutes - prevMinutes;
+  
+  if (totalTime <= 0) return 0;
   return Math.min(100, Math.max(0, (elapsed / totalTime) * 100));
 }

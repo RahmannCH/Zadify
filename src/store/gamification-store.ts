@@ -119,7 +119,7 @@ export const useGamificationStore = create<GamificationStore>()(
         set((state) => ({
           xp: state.xp + amount,
           lastOpenedTimestamp: Date.now(),
-          recentXpGains: [...state.recentXpGains, { amount, reason: source, id }]
+          recentXpGains: [...state.recentXpGains, { amount, reason: source, id }].slice(-20)
         }));
         get().checkMilestones();
       },

@@ -44,8 +44,8 @@ export default function ParentDashboard() {
           </div>
           
           <div className="flex justify-between text-sm font-medium mb-2">
-            <span>{store.xp} XP</span>
-            <span className="text-muted-foreground">{levelInfo.nextXp} XP</span>
+            <span>{store.xp} ZP</span>
+            <span className="text-muted-foreground">{levelInfo.nextXp} ZP</span>
           </div>
           <div className="h-3 w-full bg-muted/50 rounded-full overflow-hidden">
             <motion.div

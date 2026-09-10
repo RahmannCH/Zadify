@@ -60,7 +60,7 @@ export default function ZakatCalculator() {
   };
 
   const calculateMaal = () => {
-    const totalAssets = savings + investments - debts;
+    const totalAssets = Math.max(0, savings + investments - debts);
     const nisab = 85 * goldPrice; // Nisab 85 gram emas
     if (totalAssets >= nisab) {
       return { total: totalAssets * 0.025, wajib: true, nisab };
@@ -75,15 +75,23 @@ export default function ZakatCalculator() {
     return { total: 0, wajib: false, nisab: 85 };
   };
 
-  const InputField = ({ label, value, onChange, prefix = "Rp" }: any) => (
+  interface InputFieldProps {
+    label: string;
+    value: number;
+    onChange: (val: number) => void;
+    prefix?: string;
+  }
+
+  const InputField = ({ label, value, onChange, prefix = "Rp" }: InputFieldProps) => (
     <div className="mb-4">
       <label className="block text-sm font-medium text-muted-foreground mb-1">{label}</label>
       <div className="relative">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{prefix}</span>
         <Input 
           type="number" 
+          min={0}
           value={value === 0 ? "" : value} 
-          onChange={(e) => onChange(Number(e.target.value))}
+          onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
           className="pl-10 h-12 text-lg"
           placeholder="0"
         />

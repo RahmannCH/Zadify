@@ -99,7 +99,7 @@ export function useReminderCheck() {
     reminders.forEach((reminder) => {
       if (!reminder.enabled) return;
       if (reminder.lastTriggered?.startsWith(today)) return;
-      if (reminder.time === currentTime) {
+      if (reminder.time <= currentTime) {
         // Trigger notification
         if ("Notification" in window && Notification.permission === "granted") {
           new Notification(reminder.title, {

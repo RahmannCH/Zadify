@@ -90,7 +90,7 @@ export default function ChatPage() {
         <p className="text-muted-foreground">Tanya jawab seputar Al-Qur'an, fikih, doa, dan bekal ibadah harian</p>
       </div>
 
-      <div className="rounded-2xl border bg-card overflow-hidden flex flex-col h-[600px]">
+      <div className="rounded-2xl border bg-card overflow-hidden flex flex-col h-[calc(100dvh-220px)] min-h-[480px] max-h-[720px]">
         <div className="flex-1 overflow-y-auto p-6">
           <AnimatePresence initial={false}>
             {messages.map((msg, idx) => (

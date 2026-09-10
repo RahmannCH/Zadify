@@ -179,13 +179,22 @@ export default function DzikirPage() {
 
       {/* Cincin Tasbih Haptic */}
       <motion.div 
-        className="relative cursor-pointer select-none group my-auto" 
+        className="relative cursor-pointer select-none group my-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-teal rounded-full" 
         onClick={handleTap}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleTap();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Tekan cincin untuk menghitung dzikir"
         whileTap={{ scale: 0.95 }}
       >
         <div className={`absolute inset-4 rounded-full bg-teal/10 blur-3xl transition-opacity duration-500 ${count > 0 ? 'opacity-100' : 'opacity-0'}`} />
         
-        <svg className="w-[280px] h-[280px] md:w-[300px] md:h-[300px] transform -rotate-90 relative z-10 filter drop-shadow-xl">
+        <svg viewBox="0 0 300 300" className="w-[280px] h-[280px] md:w-[300px] md:h-[300px] transform -rotate-90 relative z-10 filter drop-shadow-xl">
           <circle
             cx="150" cy="150" r={radius}
             className="stroke-muted/30"

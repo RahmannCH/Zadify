@@ -147,7 +147,7 @@ export const useAnalyticsStore = create<AnalyticsStore>()(
         for (let i = days - 1; i >= 0; i--) {
           const d = new Date(today);
           d.setDate(d.getDate() - i);
-          const dateStr = d.toISOString().split("T")[0];
+          const dateStr = getWitaDate(d);
           const log = history[dateStr];
           const totalActivity = log
             ? log.ayahsRead + log.dzikirCount / 10 + log.prayersCompleted * 5
@@ -177,7 +177,7 @@ export const useAnalyticsStore = create<AnalyticsStore>()(
         for (let i = 0; i < 7; i++) {
           const d = new Date(today);
           d.setDate(d.getDate() - i);
-          const dateStr = d.toISOString().split("T")[0];
+          const dateStr = getWitaDate(d);
           const log = history[dateStr];
           if (log) {
             totalAyahs += log.ayahsRead;

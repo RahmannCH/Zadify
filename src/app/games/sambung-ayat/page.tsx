@@ -42,7 +42,7 @@ function calculateXpWithPenalty(baseXp: number, hintsUsed: number): number {
 
 export default function SambungAyatGame() {
   const [currentPuzzle, setCurrentPuzzle] = useState<Puzzle | null>(null);
-  const [userOrder, setUserOrder] = useState<string[]>([]);
+  const [userOrderIndices, setUserOrderIndices] = useState<number[]>([]);
   const [isComplete, setIsComplete] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -58,19 +58,24 @@ export default function SambungAyatGame() {
       shuffled: [...wordsArray].sort(() => Math.random() - 0.5),
       translation: randomAyah.translation
     });
+    setUserOrderIndices([]);
+    setIsComplete(false);
+    setIsCorrect(null);
+    setHintsUsed(0);
   };
 
   useEffect(() => {
     loadRandomAyah();
   }, []);
 
-  const handleDrop = (word: string) => {
-    if (isComplete || userOrder.includes(word) || !currentPuzzle) return;
-    const newOrder = [...userOrder, word];
-    setUserOrder(newOrder);
+  const handleDrop = (shuffledIdx: number) => {
+    if (isComplete || userOrderIndices.includes(shuffledIdx) || !currentPuzzle) return;
+    const newIndices = [...userOrderIndices, shuffledIdx];
+    setUserOrderIndices(newIndices);
 
-    if (newOrder.length === currentPuzzle.words.length) {
-      const correct = newOrder.every((w, i) => w === currentPuzzle.words[i]);
+    if (newIndices.length === currentPuzzle.words.length) {
+      const reconstructedWords = newIndices.map((i) => currentPuzzle.shuffled[i]);
+      const correct = reconstructedWords.every((w, i) => w === currentPuzzle.words[i]);
       setIsCorrect(correct);
       setIsComplete(true);
       if (correct) {
@@ -86,21 +91,22 @@ export default function SambungAyatGame() {
   const handleHint = () => {
     if (hintsUsed >= 1 || isComplete || !currentPuzzle) return;
     setHintsUsed(1);
-    const nextCorrectWord = currentPuzzle.words[userOrder.length];
-    if (nextCorrectWord && !userOrder.includes(nextCorrectWord)) handleDrop(nextCorrectWord);
+    const nextCorrectWord = currentPuzzle.words[userOrderIndices.length];
+    if (nextCorrectWord) {
+      const targetIdx = currentPuzzle.shuffled.findIndex(
+        (w, i) => w === nextCorrectWord && !userOrderIndices.includes(i)
+      );
+      if (targetIdx !== -1) handleDrop(targetIdx);
+    }
   };
 
   const handleReset = () => {
-    setUserOrder([]);
-    setIsComplete(false);
-    setIsCorrect(null);
-    setHintsUsed(0);
     loadRandomAyah();
   };
 
   const handleUndo = () => {
-    if (isComplete || userOrder.length === 0) return;
-    setUserOrder(userOrder.slice(0, -1));
+    if (isComplete || userOrderIndices.length === 0) return;
+    setUserOrderIndices(userOrderIndices.slice(0, -1));
   };
 
   if (!currentPuzzle) return null;
@@ -125,18 +131,18 @@ export default function SambungAyatGame() {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-3">
           <p className="text-sm font-bold text-muted-foreground">Susunan Ayat (Baca Kanan ➡️ Kiri):</p>
-          {userOrder.length > 0 && !isComplete && (
+          {userOrderIndices.length > 0 && !isComplete && (
             <button onClick={handleUndo} className="text-xs text-primary font-bold hover:underline">Undo Kata Terakhir</button>
           )}
         </div>
         <div className="min-h-[100px] rounded-2xl border-2 border-dashed border-primary/30 p-5 flex flex-wrap gap-3 items-center justify-start bg-accent/20" dir="rtl">
-          {userOrder.length === 0 ? (
+          {userOrderIndices.length === 0 ? (
             <p className="text-sm text-muted-foreground w-full text-center my-auto" dir="ltr">Tap kata di bawah untuk mulai menyusun</p>
           ) : (
             <AnimatePresence>
-              {userOrder.map((word, idx) => (
-                <motion.span key={idx + word} initial={{ opacity: 0, scale: 0.5, x: 20 }} animate={{ opacity: 1, scale: 1, x: 0 }} className="bg-gradient-to-br from-primary to-teal text-white px-5 py-3 rounded-xl font-arabic text-2xl shadow-md">
-                  {word}
+              {userOrderIndices.map((shuffledIdx, idx) => (
+                <motion.span key={idx + "-" + shuffledIdx} initial={{ opacity: 0, scale: 0.5, x: 20 }} animate={{ opacity: 1, scale: 1, x: 0 }} className="bg-gradient-to-br from-primary to-teal text-white px-5 py-3 rounded-xl font-arabic text-2xl shadow-md">
+                  {currentPuzzle.shuffled[shuffledIdx]}
                 </motion.span>
               ))}
             </AnimatePresence>
@@ -146,13 +152,13 @@ export default function SambungAyatGame() {
 
       <div className="flex flex-wrap justify-center gap-3 mb-8" dir="rtl">
         {currentPuzzle.shuffled.map((word, idx) => {
-          const used = userOrder.includes(word);
+          const used = userOrderIndices.includes(idx);
           return (
             <motion.button
               key={idx + word}
               whileHover={!used ? { scale: 1.05, y: -2 } : {}}
               whileTap={!used ? { scale: 0.95 } : {}}
-              onClick={() => handleDrop(word)}
+              onClick={() => handleDrop(idx)}
               disabled={used || isComplete}
               className={`px-6 py-4 rounded-xl font-arabic text-2xl transition-all shadow-sm border ${used ? "opacity-20 cursor-not-allowed bg-muted border-transparent" : "bg-card border-border hover:border-primary hover:shadow-md text-foreground"}`}
             >

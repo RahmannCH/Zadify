@@ -91,16 +91,29 @@ export const useHajiSavingsStore = create<HajiPlanState>()(
             return { savingsStreak: 0 };
           }
 
+          const sorted = [...state.savingsHistory].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+
           let streak = 0;
           const today = new Date();
+          const todayStr = today.toISOString().split("T")[0];
+          
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-          for (let i = 0; i < state.savingsHistory.length; i++) {
-            const recordDate = new Date(state.savingsHistory[i].date);
+          const latestStr = new Date(sorted[0].date).toISOString().split("T")[0];
+          if (latestStr !== todayStr && latestStr !== yesterdayStr) {
+            return { savingsStreak: 0 };
+          }
+
+          const startOffset = latestStr === yesterdayStr ? 1 : 0;
+
+          for (let i = 0; i < sorted.length; i++) {
+            const recordDateStr = new Date(sorted[i].date).toISOString().split("T")[0];
             const expectedDate = new Date(today);
-            expectedDate.setDate(expectedDate.getDate() - i);
-
-            // Normalize untuk perbandingan tanpa jam
-            const recordDateStr = recordDate.toISOString().split("T")[0];
+            expectedDate.setDate(expectedDate.getDate() - (i + startOffset));
             const expectedDateStr = expectedDate.toISOString().split("T")[0];
 
             if (recordDateStr === expectedDateStr) {

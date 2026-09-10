@@ -48,12 +48,18 @@ export const useMemorizeStore = create<MemorizeStore>()(
       },
 
       recordMurajaahSession: () => {
-        const today = new Date().toISOString().split("T")[0];
+        const today = new Date();
+        const todayStr = today.toISOString().split("T")[0];
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
+
         set((state) => {
-          if (state.lastMurajaahDate === today) return state;
+          if (state.lastMurajaahDate === todayStr) return state;
+          const isConsecutive = state.lastMurajaahDate === yesterdayStr;
           return {
-            murajaahStreak: state.murajaahStreak + 1,
-            lastMurajaahDate: today,
+            murajaahStreak: isConsecutive ? state.murajaahStreak + 1 : 1,
+            lastMurajaahDate: todayStr,
           };
         });
       },

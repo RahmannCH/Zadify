@@ -84,10 +84,10 @@ export const usePrayerStore = create<PrayerStore>()(
       lastFetchedDate: null,
 
       toggleSunnahDeed: (deedId: string): boolean => {
-        const state = get();
-        state.checkAndResetDay();
-        if (state.todaySunnahDeeds.includes(deedId)) return false;
-        set({ todaySunnahDeeds: [...state.todaySunnahDeeds, deedId] });
+        get().checkAndResetDay();
+        const currentSunnah = get().todaySunnahDeeds;
+        if (currentSunnah.includes(deedId)) return false;
+        set({ todaySunnahDeeds: [...currentSunnah, deedId] });
         return true;
       },
 
@@ -241,7 +241,7 @@ export const usePrayerStore = create<PrayerStore>()(
             newHistory[state.lastOpenedDate] = state.todayPrayers;
           }
 
-          const cutoff = shiftDateKey(today, -6);
+          const cutoff = shiftDateKey(today, -365);
           for (const key of Object.keys(newHistory)) {
             if (key < cutoff) delete newHistory[key];
           }

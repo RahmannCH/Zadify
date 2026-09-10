@@ -10,6 +10,16 @@ const MAX_REQUESTS_PER_WINDOW = 15;
 // --- RATE LIMITER ---
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+
+  // Periodic cleanup if map grows
+  if (ipRequestMap.size > 500) {
+    for (const [key, val] of ipRequestMap.entries()) {
+      if (now > val.resetTime) {
+        ipRequestMap.delete(key);
+      }
+    }
+  }
+
   const record = ipRequestMap.get(ip);
 
   if (!record) {
@@ -62,6 +72,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pesan tidak boleh kosong" }, { status: 400 });
     }
 
+    if (message.length > 2000) {
+      return NextResponse.json(
+        { reply: "⚠️ **Pesan Terlalu Panjang**\n\nMaksimal panjang pertanyaan adalah 2000 karakter. Mohon ringkas pertanyaan Anda." },
+        { status: 400 }
+      );
+    }
+
     if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "") {
       return NextResponse.json(
         {
@@ -72,7 +89,7 @@ export async function POST(req: Request) {
     }
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-flash",
       generationConfig: {
         temperature: 0.7,
         topP: 0.9,

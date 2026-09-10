@@ -153,7 +153,16 @@ export default function WarisCalculator() {
       remaining = 0;
     }
 
-    if (remaining > 1) {
+    // --- 4. KAIDAH 'AWL (Pengurangan Proporsional jika Total Furudh > Harta) ---
+    const totalAllocated = shares.reduce((acc, s) => acc + s.amount, 0);
+    if (totalAllocated > netEstate && totalAllocated > 0) {
+      const awlFactor = netEstate / totalAllocated;
+      for (const share of shares) {
+        share.amount = Math.round(share.amount * awlFactor);
+        share.note = (share.note ? share.note + " • " : "") + "Disesuaikan via kaidah 'Awl";
+      }
+      remaining = 0;
+    } else if (remaining > 1) {
       shares.push({ heir: "Sisa Harta (Baitul Mal / Radd)", percentage: "Sisa", amount: remaining });
     }
 
@@ -199,23 +208,23 @@ export default function WarisCalculator() {
               
               <div>
                 <label className="text-xs font-bold text-muted-foreground mb-1 block">Total Seluruh Harta (Aset, Tabungan, Tanah, Emas)</label>
-                <Input type="number" value={totalAsset || ""} onChange={(e) => setTotalAsset(Number(e.target.value))} placeholder="Rp 0" className="h-12 text-lg font-bold" />
+                <Input type="number" min={0} value={totalAsset || ""} onChange={(e) => setTotalAsset(Math.max(0, Number(e.target.value)))} placeholder="Rp 0" className="h-12 text-lg font-bold" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-muted-foreground mb-1 block">Biaya Pengurusan Jenazah</label>
-                  <Input type="number" value={funeralCost || ""} onChange={(e) => setFuneralCost(Number(e.target.value))} placeholder="Rp 0" className="h-12" />
+                  <Input type="number" min={0} value={funeralCost || ""} onChange={(e) => setFuneralCost(Math.max(0, Number(e.target.value)))} placeholder="Rp 0" className="h-12" />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-muted-foreground mb-1 block">Hutang Almarhum/ah</label>
-                  <Input type="number" value={debts || ""} onChange={(e) => setDebts(Number(e.target.value))} placeholder="Rp 0" className="h-12" />
+                  <Input type="number" min={0} value={debts || ""} onChange={(e) => setDebts(Math.max(0, Number(e.target.value)))} placeholder="Rp 0" className="h-12" />
                 </div>
               </div>
 
               <div>
                 <label className="text-xs font-bold text-muted-foreground mb-1 block">Wasiat (Maksimal 1/3 Sisa Harta Bersih)</label>
-                <Input type="number" value={wasiat || ""} onChange={(e) => setWasiat(Number(e.target.value))} placeholder="Rp 0" className="h-12" />
+                <Input type="number" min={0} value={wasiat || ""} onChange={(e) => setWasiat(Math.max(0, Number(e.target.value)))} placeholder="Rp 0" className="h-12" />
                 {wasiat > maxWasiat && maxWasiat > 0 && (
                   <p className="text-[11px] text-amber-600 mt-1">Wasiat melebihi 1/3 harta bersih ({formatRp(maxWasiat)}). Sesuai syariat, batas maksimal adalah 1/3.</p>
                 )}
