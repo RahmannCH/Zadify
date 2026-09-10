@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="https://zadify.vercel.app/"><img src="https://img.shields.io/badge/Live_Demo-zadify.vercel.app-00C853?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
-  <a href="https://github.com/RahmannCH/Al-Qur-an_1.0"><img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repo" /></a>
+  <a href="https://github.com/RahmannCH/Zadify"><img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repo" /></a>
   <a href="#-lisensi"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /></a>
 </p>
 
@@ -175,7 +175,7 @@ Dibangun dengan arsitektur **Next.js 16.3 (Turbopack)** dan **React 19**, Zadify
 ## 📁 Struktur Direktori
 
 ```text
-Al-Qur-an_1.0/
+Zadify/
 ├── public/                     # Aset statis, ikon PWA, logo, audio sfx
 │   ├── zadify-logo.svg         # Logo resmi Zadify
 │   ├── readme-banner.png       # Banner showcase GitHub
@@ -213,8 +213,8 @@ Ikuti langkah-langkah berikut untuk menjalankan Zadify di lingkungan pengembanga
 
 ### 1. Clone Repositori
 ```bash
-git clone https://github.com/RahmannCH/Al-Qur-an_1.0.git
-cd Al-Qur-an_1.0
+git clone https://github.com/RahmannCH/Zadify.git
+cd Zadify
 ```
 
 ### 2. Pasang Dependencies
